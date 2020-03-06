@@ -1,0 +1,60 @@
+﻿@using AppointmentK1.Models;
+@{
+    ViewBag.Title = "Оценка";
+    Student std = ViewData["Student"] as Student;
+    ViewBag.Student = std.FullName;
+    DrivingToEvaluate dte = ViewData["DrivingToEvaluate"] as DrivingToEvaluate;
+}
+
+<div id="partview" class="col-md-12">
+    @Html.Partial("_Evaluation")
+</div>
+
+@section Scripts {
+
+    <script>
+        var mrK = 0; var cmnT = '';
+        //Поведение при выборе оценки в частичном представлении _Evaluation
+        function SetImageSizes(s) {
+            var theimg;
+            theimg = document.getElementById('i0');
+            if (theimg && theimg.style) { theimg.style.height = '100px'; theimg.style.width = '100px' }
+            theimg = document.getElementById('i1');
+            if (theimg && theimg.style) { theimg.style.height = '100px'; theimg.style.width = '100px' }
+            theimg = document.getElementById('i2');
+            if (theimg && theimg.style) { theimg.style.height = '100px'; theimg.style.width = '100px' }
+            switch (s) {
+                case 'bad':
+                    $('#c1').attr("placeholder", "Пожалуйста, уточните, что Вам не понравилось...");
+                    theimg = document.getElementById('i0');
+                    mrK = -1;
+                    break;
+                case 'neutral':
+                    $('#c1').attr("placeholder", "");
+                    theimg = document.getElementById('i1');
+                    mrK = 0;
+                    break;
+                case 'good':
+                    $('#c1').attr("placeholder", "Пожалуйста, уточните, что Вам понравилось...");
+                    theimg = document.getElementById('i2');
+                    mrK = 1;
+                    break;
+                default:
+                    theimg = document.getElementById('NoSuchImage');
+                    mrK = 0;
+                    break;
+            }
+            if (theimg && theimg.style) { theimg.style.height = '150px'; theimg.style.width = '150px' }
+        }
+        //Изменение комментария
+        function CommentChanged() {
+            cmnT = $('#c1').val();
+        }
+        //Кнопка "Сохранить оценку"
+        function btnsendclicked()
+        {
+            $('#partview').load("/Evaluation/SendRating", {mark: mrK, comment: cmnT});            
+        }
+
+    </script>
+}

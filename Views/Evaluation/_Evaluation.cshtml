@@ -1,0 +1,32 @@
+﻿@using AppointmentK1.Models
+@{
+    DrivingToEvaluate dte = (DrivingToEvaluate)ViewData["DrivingToEvaluate"];
+}
+
+<div id="DteInfo" class="col-md-12">
+    <h2>@dte.Summary</h2>
+</div>
+<hr />
+<div class="col-md-12">
+    <ul class="nav">
+        <li class="col-md-4" style="text-align: center">
+            <img id="i0" style="height: 100px; width: 100px;" src="~/Images/bad.png" onclick="SetImageSizes('bad')" class="animated swing" />
+        </li>
+        <li class="col-md-4" style="text-align: center">
+            <img id="i1" style="height: 100px; width: 100px;" src="~/Images/neutral.png" onclick="SetImageSizes('neutral')" />
+        </li>
+        <li class="col-md-4" style="text-align: center">
+            <img id="i2" style="height: 100px; width: 100px;" src="~/Images/good.png" onclick="SetImageSizes('good')" />
+        </li>
+    </ul>
+</div>
+<label>Комментарий</label>
+<div class="form-group col-md-12">
+    @*<label class="col-form-label" for="c1">Комментарий</label>*@
+    @*<input type="text" class="col-md-12" id="c1" onchange="CommentChanged();">*@
+    <input type="text" class="col-md-12" id="c1" onchange="CommentChanged();">
+</div>
+
+<div class="form-group col-md-12">
+    <button id="btnSend" type="button" class="btn btn-primary col-md-12" onclick="btnsendclicked();">Сохранить оценку</button>
+</div>

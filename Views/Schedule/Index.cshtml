@@ -1,0 +1,86 @@
+﻿@using AppointmentK1.Models;
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        ViewBag.Title = "Запись на вождение";
+        Student std = ViewData["Student"] as Student;
+        ViewBag.Student = std.FullName;
+        ViewBag.HoursAc = std.AcquiredUnits.ToString();
+        ViewBag.HoursSpent = std.UsedUnits.ToString();
+        ViewBag.HoursLeft = std.LeftUnits.ToString();
+        Layout = "~/Views/Shared/DSLayout.cshtml";
+        DSSchedule Schedule = ViewData["Schedule"] as DSSchedule;
+        ViewBag.Message = ViewData["Message"];
+        <h2>Запись на вождение</h2>
+        <div class="navbar navbar-inverse @*navbar-fixed-top*@">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#S">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="navbar-collapse collapse" id="S">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.LabelFor(model => Schedule.Day, new { @class = "form-control margin-top-10 site-borderless" })</li>
+                        <li><button id="BPrev" name="action" value="Prev" class="form-control margin-top-10"><span class="glyphicon glyphicon-arrow-left"></span> </button></li>
+                        <li>
+                            @Html.EditorFor(model => Schedule.Day, new { htmlAttributes = new { @class = "form-control margin-top-10", @id = "IDate" } })
+                            @Html.ValidationMessageFor(model => Schedule.Day, "", new { @class = "text-danger" })
+                        </li>
+                        <li><button id="BNext" name="action" value="Next" class="form-control margin-top-10"><span class="glyphicon glyphicon-arrow-right"></span> </button></li>
+                        <li class="divider"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="alert alert-dismissible alert-success">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>@ViewBag.Message</strong>
+            @*<strong>Well done!</strong> You successfully read <a href="#" class="alert-link">this important alert message</a>.*@
+        </div>
+        }
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(function () {
+            $("#IDate")
+                .datepicker({ dateFormat: 'dd.mm.yy' })
+                .get(0).setAttribute("type", "text");
+            $.datepicker.regional['ru'] = {
+                prevText: 'Пред',
+                nextText: 'След',
+                monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
+                    'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+                dayNames: ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'],
+                dayNamesShort: ['вск', 'пнд', 'втр', 'срд', 'чтв', 'птн', 'сбт'],
+                dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+                weekHeader: 'Не',
+                dateFormat: 'dd.mm.yy',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: ''
+            };
+            $.datepicker.setDefaults($.datepicker.regional['ru']);
+            $.validator.addMethod('date',
+                function (value, element) {
+                    var ok = true;
+                    try {
+                        $.datepicker.parseDate('dd.mm.yy', value);
+                    }
+                    catch (err) {
+                        ok = false;
+                    }
+                    return ok;
+                }
+                //, "Упс!"
+            );
+        });
+    </script>
+}

@@ -1,0 +1,9 @@
+﻿@using AppointmentK1.Models;
+@{
+    ViewBag.Title = "Оценка";
+    Student std = ViewData["Student"] as Student;
+    ViewBag.Student = std.FullName;
+}
+
+<h1 id="thename">Сейчас нет вождения для оценки (оценить можно только последнее прошедшее сегодня вождение).</h1>
+

@@ -1,0 +1,20 @@
+﻿@using AppointmentK1.Models;
+@{
+    ViewBag.Title = "Мои экзамены";
+    Student std = ViewData["Student"] as Student;
+    ViewBag.Student = std.FullName;
+    ViewBag.HoursAc = std.AcquiredUnits.ToString();
+    ViewBag.HoursSpent = std.UsedUnits.ToString();
+    ViewBag.HoursLeft = std.LeftUnits.ToString();
+    Layout = "~/Views/Shared/DSLayout.cshtml";
+    StudentInfo si = std.ShowStudentInfo();
+}
+
+@foreach (Bloque bloque in si.Bloques)
+{
+    <h3>@bloque.Parag</h3>
+    foreach (string linea in bloque.Lineas)
+    {
+        <p>@linea</p>
+    }
+}

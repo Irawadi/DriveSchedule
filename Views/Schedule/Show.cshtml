@@ -1,0 +1,108 @@
+﻿@using AppointmentK1.Models;
+@{
+    FatModel FM = ViewData["FatModel"] as FatModel;
+    Student std = FM.Student;
+    ViewBag.Student = std.FullName;
+    DSSchedule sch = FM.Schedule;
+    ViewBag.Title = "Запись на вождение";
+    ViewBag.Date = sch.DayString;
+    ViewBag.Message = sch.Message;
+    Layout = "~/Views/Shared/DSLayout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div id="Sched">
+    @Html.Partial("_ShowPartial", FM)
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("#IDate")
+                .datepicker({ dateFormat: 'dd.mm.yy' })
+                .get(0).setAttribute("type", "text");
+            $.datepicker.regional['ru'] = {
+                prevText: 'Пред',
+                nextText: 'След',
+                monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
+                    'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+                dayNames: ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'],
+                dayNamesShort: ['вск', 'пнд', 'втр', 'срд', 'чтв', 'птн', 'сбт'],
+                dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+                weekHeader: 'Не',
+                dateFormat: 'dd.mm.yy',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: ''
+            };
+            $.datepicker.setDefaults($.datepicker.regional['ru']);
+            $.validator.addMethod('date',
+                function (value, element) {
+                    var ok = true;
+                    try {
+                        $.datepicker.parseDate('dd.mm.yy', value);
+                    }
+                    catch (err) {
+                        ok = false;
+                    }
+                    return ok;
+                }
+            );
+        });
+    </script>
+    <script type="text/javascript">
+        function aj() {
+            var SDate = encodeURIComponent($('#IDate').val());
+            $('#Sched').load('@Url.Action("Aj", "Schedule", new { SDate = "Qwert" })'.replace("Qwert", SDate));
+        }
+        function next() {
+            $('#Sched').load('@Url.Action("Next", "Schedule")');
+        }
+        function prev() {
+            $('#Sched').load('@Url.Action("Prev", "Schedule")');
+        }
+        function onRadioClick(e) {
+            $('#Sched').load('@Url.Action("Rc", "Schedule", new { PlaceId = "Qwert" })'.replace("Qwert", encodeURIComponent(e.value)));
+        }
+        $(document).ajaxComplete(function () {
+            $("#IDate")
+                .datepicker({ dateFormat: 'dd.mm.yy' })
+                .get(0).setAttribute("type", "text");
+
+                $.datepicker.regional['ru'] = {
+                    prevText: 'Пред',
+                    nextText: 'След',
+                    monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                    monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
+                        'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+                    dayNames: ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'],
+                    dayNamesShort: ['вск', 'пнд', 'втр', 'срд', 'чтв', 'птн', 'сбт'],
+                    dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+                    weekHeader: 'Не',
+                    dateFormat: 'dd.mm.yy',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: ''
+                };
+                $.datepicker.setDefaults($.datepicker.regional['ru']);
+                $.validator.addMethod('date',
+                    function (value, element) {
+                        var ok = true;
+                        try {
+                            $.datepicker.parseDate('dd.mm.yy', value);
+                        }
+                        catch (err) {
+                            ok = false;
+                        }
+                        return ok;
+                    })
+        });
+    </script>
+}

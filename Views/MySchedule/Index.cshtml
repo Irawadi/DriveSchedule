@@ -1,0 +1,81 @@
+﻿@using AppointmentK1.Models;
+@model IEnumerable<AppointmentK1.Models.Driving>
+
+@{
+    ViewBag.Title = "Моё расписание";
+    Student std = ViewData["Student"] as Student;
+    ViewBag.Student = std.FullName;
+    ViewBag.HoursAc = std.AcquiredUnits.ToString();
+    ViewBag.HoursSpent = std.UsedUnits.ToString();
+    ViewBag.HoursLeft = std.LeftUnits.ToString();
+    Layout = "~/Views/Shared/DSLayout.cshtml";
+}
+
+@{ int i = 0; string cls = "warning";}
+<h2>Моё расписание</h2>
+
+<ul class="nav navbar-nav">
+    <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+            <span class="site-label btn-primary"><span class="badge">@ViewBag.HoursAc</span></span>
+            <span class="site-label btn-info"><span class="badge">@ViewBag.HoursSpent</span></span>
+            <span class="site-label btn-success"><span class="badge">@ViewBag.HoursLeft</span></span>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li><a href="#">Оплачено <span class="site-label btn-primary"><span class="badge">@ViewBag.HoursAc</span></span> часов</a></li>
+            <li><a href="#">Использовано <span class="site-label btn-info"><span class="badge">@ViewBag.HoursSpent</span></span> часов</a></li>
+            <li><a href="#">Осталось <span class="site-label btn-success"><span class="badge">@ViewBag.HoursLeft</span></span> часов</a></li>
+        </ul>
+    </li>
+</ul>
+
+<table class="table table-striped table-hover ">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Number)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Time)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Vehicle)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Instructor)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Place)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        i++;
+        if (i % 2 == 0) { cls = "info"; } else { cls = "warning"; }
+        <tr class=@cls>
+            <td>
+                @Html.DisplayFor(modelItem => item.Number)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Time)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Vehicle)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Instructor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Place)
+            </td>
+        </tr>
+    }
+
+</table>

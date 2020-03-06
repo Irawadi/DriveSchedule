@@ -1,0 +1,150 @@
+﻿@model AppointmentK1.Models.FatModel
+@using AppointmentK1.Models;
+@{
+    Student std = Model.Student;
+    ViewBag.HoursAc = std.AcquiredUnits.ToString();
+    ViewBag.HoursSpent = std.UsedUnits.ToString();
+    ViewBag.HoursLeft = std.LeftUnits.ToString();
+    DSSchedule sch = Model.Schedule;
+    ViewBag.Date = sch.DayString;
+    string cls;
+    string idbutton;
+}
+
+
+<h3 id="TheMessage">
+    @sch.SelectedPlace.Name:  @sch.Message
+</h3>
+<div class="navbar" id="bs-example-navbar-collapse-show">
+    <ul class="nav navbar-nav">
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                <span class="site-label btn-primary"><span class="badge">@ViewBag.HoursAc</span></span>
+                <span class="site-label btn-info"><span class="badge">@ViewBag.HoursSpent</span></span>
+                <span class="site-label btn-success"><span class="badge">@ViewBag.HoursLeft</span></span>
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="#">Оплачено <span class="site-label btn-primary"><span class="badge">@ViewBag.HoursAc</span></span> часов</a></li>
+                <li><a href="#">Использовано <span class="site-label btn-info"><span class="badge">@ViewBag.HoursSpent</span></span> часов</a></li>
+                <li><a href="#">Осталось <span class="site-label btn-success"><span class="badge">@ViewBag.HoursLeft</span></span> часов</a></li>
+            </ul>
+        </li>
+        <li><label class="form-control margin-top-10">Дата: </label></li>
+        <li><button id="BPrev" name="i2" value="Prev" class="form-control margin-top-10" type="submit" onclick="prev();"><span class="glyphicon glyphicon-arrow-left"></span> </button></li>
+        <li><input type="text" id="IDate" name="SDate" value="@ViewBag.Date" class="form-control margin-top-10 col-md-1" onchange="aj();" /></li>
+        <li><button id="BNext" name="i2" value="Next" class="form-control margin-top-10" onclick="next();"><span class="glyphicon glyphicon-arrow-right"></span> </button></li>
+        @foreach (Place place in sch.Places)
+        {
+        <li>
+            @if (sch.IsSelected(place))
+                {
+            <label class="form-control margin-top-10">
+                <input id="Place" name="Place" type="radio" value="@place.id" onclick="onRadioClick(this);" checked="checked" />
+                @place.Name
+            </label>
+                }
+                else
+                {
+            <label class="form-control margin-top-10">
+                <input id="Place" name="Place" type="radio" value="@place.id" onclick="onRadioClick(this);" />
+                @place.Name
+            </label>
+                }
+        </li>
+        }
+    </ul>
+</div>
+@if (!sch.ButtonMessage.IsEmpty())
+{
+    <div class="alert alert-dismissible alert-success">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        @sch.ButtonMessage
+    </div>
+}
+<br />
+@using (Ajax.BeginForm("PressButton", "Schedule", new AjaxOptions { HttpMethod = "post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "Sched" }))
+{
+
+    <table class="table table-striped table-hover">
+        <tr>
+            <th></th>
+            @foreach (Shift sh in sch.SelectedPlace.Shifts)
+                {
+                <th>
+                    @sh.Name
+                </th>
+            }
+        </tr>
+        @if (sch.SelectedPlace.Shifts.Count > 0)
+        {
+            for (int i = 0; i < sch.SelectedPlace.Shifts[1].Vehicles.Count; i++)
+            {
+                if (i % 2 == 0) { cls = "info"; } else { cls = "warning"; }
+                <tr class="@cls">
+                    @for (int k = -1; k < sch.SelectedPlace.Shifts.Count; k++)
+                        {
+                            if (k == -1)
+                            {
+                            <td>
+                                @sch.SelectedPlace.Shifts[1].Vehicles[i].FullName
+                            </td>
+                        }
+                        else
+                        {
+                            idbutton = "IdShift|" + sch.SelectedPlace.Shifts[k].Id.ToString() + "|IdVehicle|" + sch.SelectedPlace.Shifts[k].Vehicles[i].Id.ToString() + "|";
+                            if (sch.SelectedPlace.Shifts[k].Vehicles[i].Status == "Me")
+                            {
+                                <td>
+                                    @if (sch.SelectedPlace.Shifts[k].Vehicles[i].UnsubscribeAllowed)
+                                    {
+                                        cls = "btn btn-warning";
+                                        <button name="buttonValue" value="@idbutton" class="@cls">Отмена</button>
+                                    }
+                                    else
+                                    {
+                                        cls = "btn btn-warning disabled";
+                                        <button name="buttonValue" value="@idbutton" disabled class="@cls">Отмена</button>
+                                    }
+                                </td>
+                            }
+                            if (sch.SelectedPlace.Shifts[k].Vehicles[i].Status == "Free" | sch.SelectedPlace.Shifts[k].Vehicles[i].Status == "FreeForReplacement")
+                            {
+                                <td>
+                                    @if (sch.SelectedPlace.Shifts[k].Vehicles[i].SubscribeAllowed)
+                                    {
+                                        cls = "btn btn-success";
+                                        <button name="buttonValue" value="@idbutton" class="@cls">Запись</button>
+                                    }
+                                    else
+                                    {
+                                        cls = "btn btn-success disabled";
+                                        <button name="buttonValue" value="@idbutton" disabled class="@cls">Запись</button>
+                                    }
+                                </td>
+                            }
+                            if (sch.SelectedPlace.Shifts[k].Vehicles[i].Status == "WaitingForReplacement")
+                            {
+                                <td>
+                                    @if (sch.SelectedPlace.Shifts[k].Vehicles[i].SubscribeAllowed)
+                                    {
+                                        cls = "btn btn-info";
+                                        <button name="buttonValue" value="@idbutton" class="@cls">Жду замены</button>
+                                    }
+                                    else
+                                    {
+                                        cls = "btn btn-info disabled";
+                                        <button name="buttonValue" value="@idbutton" disabled class="@cls">Жду замены</button>
+                                    }
+                                </td>
+                            }
+                            if (sch.SelectedPlace.Shifts[k].Vehicles[i].Status == "SomeoneElseOrBlocked")
+                            {
+                                <td></td> }
+                        }
+                    }
+                </tr>
+            }
+        }
+    </table>
+}
